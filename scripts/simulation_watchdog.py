@@ -95,7 +95,7 @@ def main() -> int:
                 heartbeat_value = None
                 heartbeat_changed_at = time.monotonic()
                 connection_failures = 0
-                log("CoppeliaSim ZeroMQ baglantisi hazir.")
+                log("CoppeliaSim ZeroMQ connection is ready.")
 
             state = sim.getSimulationState()
             now = time.monotonic()
@@ -103,12 +103,12 @@ def main() -> int:
             reason = ""
 
             if state == sim.simulation_paused:
-                log("Beklenmeyen duraklama algilandi; simulasyon devam ettiriliyor.")
+                log("Unexpected pause detected; resuming the simulation.")
                 sim.startSimulation()
                 heartbeat_changed_at = now
             elif state == sim.simulation_stopped:
                 needs_rebuild = True
-                reason = "simulasyon durmus"
+                reason = "the simulation has stopped"
             else:
                 controller_state = sim.getInt32Signal("sorting_cell_controller_state")
                 heartbeat = sim.getInt32Signal("sorting_cell_heartbeat_ms")
@@ -118,16 +118,16 @@ def main() -> int:
                     heartbeat_changed_at = now
                 elif now - heartbeat_changed_at >= HEARTBEAT_TIMEOUT_SECONDS:
                     needs_rebuild = True
-                    reason = "kontrolcu kalp atisi ilerlemiyor"
+                    reason = "the controller heartbeat is not advancing"
                 if controller_state != 2:
                     needs_rebuild = True
-                    reason = f"kontrolcu hazir degil (durum={controller_state})"
+                    reason = f"the controller is not ready (state={controller_state})"
                 if progress_stalled == 1:
                     needs_rebuild = True
-                    reason = "uretim ilerlemesi 60 simulasyon saniyesidir yok"
+                    reason = "production has not advanced for 60 simulation seconds"
 
             if needs_rebuild and now - last_rebuild_at >= REBUILD_COOLDOWN_SECONDS:
-                log(f"Otomatik toparlanma basladi: {reason}.")
+                log(f"Automatic recovery started: {reason}.")
                 last_rebuild_at = now
                 rebuild_scene()
                 client = None
@@ -135,15 +135,15 @@ def main() -> int:
 
             time.sleep(POLL_SECONDS)
         except KeyboardInterrupt:
-            log("Saglik gozcusu kullanici tarafindan durduruldu.")
+            log("The health watchdog was stopped by the user.")
             return 0
         except Exception as exc:
             connection_failures += 1
-            log(f"Gozcu baglanti hatasi {connection_failures}: {exc}")
+            log(f"Watchdog connection error {connection_failures}: {exc}")
             client = None
             sim = None
             if connection_failures >= 5:
-                log("CoppeliaSim kapali gorunuyor; saglik gozcusu sonlandirildi.")
+                log("CoppeliaSim appears to be closed; stopping the health watchdog.")
                 return 1
             time.sleep(POLL_SECONDS)
 

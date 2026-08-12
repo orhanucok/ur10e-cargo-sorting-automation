@@ -3,7 +3,7 @@ $ErrorActionPreference = "Stop"
 $projectRoot = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot ".."))
 $launcher = Join-Path $projectRoot "scripts\launch_project.ps1"
 $desktop = [Environment]::GetFolderPath("Desktop")
-$shortcutPath = Join-Path $desktop "UR10e Koli Ayirma Simulasyonu.lnk"
+$shortcutPath = Join-Path $desktop "UR10e Cargo Sorting Automation.lnk"
 $powershell = Join-Path $env:SystemRoot "System32\WindowsPowerShell\v1.0\powershell.exe"
 
 if (-not (Test-Path -LiteralPath $launcher)) {
@@ -15,7 +15,7 @@ $shortcut = $shell.CreateShortcut($shortcutPath)
 $shortcut.TargetPath = $powershell
 $shortcut.Arguments = "-NoProfile -ExecutionPolicy Bypass -File `"$launcher`""
 $shortcut.WorkingDirectory = $projectRoot
-$shortcut.Description = "UR10e gercekci koli ayirma simulasyonunu baslat"
+$shortcut.Description = "Launch the UR10e cargo sorting automation simulation"
 $coppeliaIcon = "C:\Program Files\CoppeliaRobotics\CoppeliaSimPro\coppeliaSim.exe"
 $shortcut.IconLocation = if (Test-Path -LiteralPath $coppeliaIcon) {
     "$coppeliaIcon,0"

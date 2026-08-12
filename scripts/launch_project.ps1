@@ -14,11 +14,11 @@ $watchdogMaintenance = Join-Path $projectRoot "work\watchdog_maintenance.flag"
 
 function Complete-Launch([int]$Code) {
     if ($Code -eq 0) {
-        Write-Host "Baslatici kapanabilir; CoppeliaSim calismaya devam edecek." -ForegroundColor DarkGray
+        Write-Host "The launcher can close; CoppeliaSim will continue running." -ForegroundColor DarkGray
         Start-Sleep -Seconds 2
     } elseif (-not $NoPause) {
         Write-Host ""
-        Read-Host "Pencereyi kapatmak icin Enter'a basin"
+        Read-Host "Press Enter to close this window"
     }
     exit $Code
 }
@@ -63,51 +63,51 @@ function Find-CoppeliaSim {
 
 Clear-Host
 Write-Host "============================================================" -ForegroundColor Cyan
-Write-Host " UR10e GERCEKCI KOLI AYIRMA SIMULASYONU" -ForegroundColor Cyan
+Write-Host " UR10e CARGO SORTING AUTOMATION" -ForegroundColor Cyan
 Write-Host "============================================================" -ForegroundColor Cyan
-Write-Host "Proje: $projectRoot"
+Write-Host "Project: $projectRoot"
 Write-Host ""
 
 if (-not (Test-Path -LiteralPath $python)) {
-    Write-Host "HATA: Python proje ortami bulunamadi." -ForegroundColor Red
-    Write-Host "Once README.md icindeki kurulum komutlarini calistirin."
+    Write-Host "ERROR: The Python project environment was not found." -ForegroundColor Red
+    Write-Host "Run the setup commands in README.md first."
     Complete-Launch 2
 }
 
-Write-Host "[1/4] Cekirdek guvenlik testleri calisiyor..." -ForegroundColor Yellow
+Write-Host "[1/4] Running core safety tests..." -ForegroundColor Yellow
 Push-Location $projectRoot
 try {
     & $python -m pytest -q
     if ($LASTEXITCODE -ne 0) {
-        Write-Host "HATA: Testler gecmedi; simulasyon guvenli sekilde baslatilmadi." -ForegroundColor Red
+        Write-Host "ERROR: Tests failed; the simulation was not started." -ForegroundColor Red
         Complete-Launch 3
     }
 } finally {
     Pop-Location
 }
 
-Write-Host "[2/4] Resmi UR10e modeli dogrulaniyor..." -ForegroundColor Yellow
+Write-Host "[2/4] Verifying the official UR10e model..." -ForegroundColor Yellow
 if (-not (Test-Path -LiteralPath $urdf)) {
     & $urdfGenerator
     if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $urdf)) {
-        Write-Host "HATA: UR10e modeli uretilemedi." -ForegroundColor Red
+        Write-Host "ERROR: The UR10e model could not be generated." -ForegroundColor Red
         Complete-Launch 4
     }
 }
 
-Write-Host "[3/4] CoppeliaSim araniyor..." -ForegroundColor Yellow
+Write-Host "[3/4] Locating CoppeliaSim..." -ForegroundColor Yellow
 $simulatorRunning = Test-TcpPort "127.0.0.1" 23000
 if (-not $simulatorRunning) {
     $coppeliaSim = Find-CoppeliaSim
     if ($null -eq $coppeliaSim) {
         Write-Host ""
-        Write-Host "CoppeliaSim henuz kurulu degil." -ForegroundColor Red
-        Write-Host "Kisayol ve proje calisiyor; fizik sahnesini acmak icin CoppeliaSim 4.10 kurulumu gerekiyor."
-        Write-Host "Lisans uygunlugu belirlenmeden Edu/Pro paketi otomatik indirilmeyecek."
+        Write-Host "CoppeliaSim is not installed." -ForegroundColor Red
+        Write-Host "Install CoppeliaSim 4.10 to run the physics scene."
+        Write-Host "The Edu/Pro package is not downloaded automatically because license eligibility must be confirmed."
         Complete-Launch 4
     }
 
-    Write-Host "CoppeliaSim baslatiliyor: $coppeliaSim"
+    Write-Host "Starting CoppeliaSim: $coppeliaSim"
     Start-Process -FilePath $coppeliaSim -WorkingDirectory (Split-Path $coppeliaSim -Parent) | Out-Null
     $deadline = [DateTime]::UtcNow.AddSeconds(30)
     do {
@@ -116,12 +116,12 @@ if (-not $simulatorRunning) {
     } while (-not $simulatorRunning -and [DateTime]::UtcNow -lt $deadline)
 
     if (-not $simulatorRunning) {
-        Write-Host "HATA: CoppeliaSim acildi ancak ZeroMQ 23000 portu hazir olmadi." -ForegroundColor Red
+        Write-Host "ERROR: CoppeliaSim started, but ZeroMQ port 23000 did not become ready." -ForegroundColor Red
         Complete-Launch 5
     }
 }
 
-Write-Host "[4/4] MuJoCo hucre sahnesi kuruluyor..." -ForegroundColor Yellow
+Write-Host "[4/4] Building the MuJoCo sorting cell..." -ForegroundColor Yellow
 $arguments = @(
     $sceneBuilder,
     "--config", $cellConfig,
@@ -138,7 +138,7 @@ try {
     Remove-Item -LiteralPath $watchdogMaintenance -Force -ErrorAction SilentlyContinue
 }
 if ($sceneBuilderExitCode -ne 0) {
-    Write-Host "HATA: CoppeliaSim sahnesi kurulamadi." -ForegroundColor Red
+    Write-Host "ERROR: The CoppeliaSim scene could not be built." -ForegroundColor Red
     Complete-Launch 6
 }
 
@@ -148,6 +148,6 @@ Start-Process `
     -WorkingDirectory $projectRoot `
     -WindowStyle Hidden | Out-Null
 
-Write-Host "Simulasyon baslatildi: uctan uca fiziksel besleme, etiket yonlendirme ve renk ayirma aktif." -ForegroundColor Green
-Write-Host "Saglik gozcusu aktif: duraklama, kalp atisi ve uretim ilerlemesi izleniyor." -ForegroundColor Green
+Write-Host "Simulation started: physical infeed, label orientation, and color sorting are active." -ForegroundColor Green
+Write-Host "Health watchdog active: pause state, heartbeat, and production progress are monitored." -ForegroundColor Green
 Complete-Launch 0

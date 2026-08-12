@@ -1,76 +1,120 @@
-# Gerçekçi UR10e Koli Ayırma Hücresi
+# UR10e Cargo Sorting Automation
 
-Bu proje, üç gerçek Universal Robots UR10e kolunun bir koli yönlendirme ve ayırma
-hücresinde sanal devreye alınması için hazırlanmıştır.
+A physics-based virtual commissioning project for an automated cargo sorting cell built with three Universal Robots UR10e manipulators, a closed-loop conveyor, vision stations, and vacuum handling.
 
-## Çalışan simülasyon
+![UR10e cargo sorting cell overview](docs/images/cargo-sorting-cell-overview.png)
 
-- CoppeliaSim 4.10 Pro ve MuJoCo, 5 ms fizik adımı
-- Universal Robots'un resmî UR10e görsel, çarpışma, kütle ve atalet verileri
-- 3× UR10e, prosedürel Robotiq EPick dört kaplı vakum tutucu
-- 1,05 m çelik silindir kaideler, üst/alt flanşlar ve ankraj cıvataları
-- 1× Basler ace 2 ana kamera ve 3× RealSense D455 yerel kamera
-- Üstte ileri, uçlarda aşağı, altta geri dönen kapalı çevrimli kinematik bant paletleri
-- Giriş sepetini sürekli besleyen fiziksel galvaniz oluk, yan korkuluklu üst magazin ve
-  MuJoCo yerçekimiyle gerçekten kayıp düşen koli havuzu
-- Farklı kütleli fiziksel koliler; koliyle birlikte dönen, ince ve çarpışmasız etiket/barkod geometrisi
-- Giriş UR10e'sinde gerçek koli seçimi, vakum kavrama, sabit kontrol istasyonuna bırakma,
-  D455 yön kontrolü, gerektiğinde etiketi üste çevirme ve hareketli banda fiziksel aktarım
-- Giriş sepetinde 18° titreşimli yerçekimi tabanı ve UR10e erişim sınırı denetimi; koliler
-  rastgele uzak köşelerde kalarak robotu kilitlemez
-- Kırmızı ve mavi görev rezervasyonu, bant takibi, motor hedefli IK hareketi, vakum alma ve
-  sepet içine fiziksel bırakma
-- Giriş ve ayırma noktalarında fiziksel korkuluk açıklıkları ve robot–konveyör çarpışmasında
-  bandı durdurup robotu dikey geri çeken 20 Hz otomatik emniyet kurtarması
-- Gerçek TCP hedefe ulaşmadan durum değiştirmeyen hareket denetimi, 40 saniyelik robot
-  watchdog'u ve kontrolcü kalp atışını izleyen bağımsız sağlık gözcüsü
-- Tek tıklamayla temiz sahne kuran masaüstü kısayolu
+## Overview
 
-Masaüstündeki `UR10e Koli Ayirma Simulasyonu` kısayoluna çift tıklamak yeterlidir.
-Başlatıcı testleri çalıştırır, resmî robot dosyasını doğrular, CoppeliaSim'i bulur ve tam
-hücreyi yeniden kurup başlatır. Başlatıcı penceresi başarıdan sonra kendiliğinden kapanır;
-CoppeliaSim açık kalır.
+The simulation models the complete parcel flow: packages are released from an infeed magazine, picked and oriented by the first UR10e, inspected on the conveyor, and sorted into red or blue bins by two downstream robots. The scene runs in CoppeliaSim 4.10 with MuJoCo contact physics and a 5 ms simulation step.
 
-## Kesintisiz çalışma ve otomatik toparlanma
+![Cargo sorting operation](docs/images/cargo-sorting-operation.png)
 
-Kısayol, simülasyondan ayrı çalışan gizli bir sağlık gözcüsü de başlatır. Gözcü iki saniyede
-bir kontrolcü kalp atışını, üretim ilerlemesini ve CoppeliaSim durumunu denetler. Beklenmeyen
-pause otomatik devam ettirilir; kontrolcü kalp atışı 20 saniye ilerlemezse veya 60 simülasyon
-saniyesi boyunca üretim olmazsa sahne temiz biçimde yeniden kurulur. Kısayolla yapılan bilinçli
-kurulumlarda bakım kilidi kullanıldığı için gözcüyle sahne kurucu aynı anda çalışmaz.
+## Highlights
 
-Gözcü olayları `outputs/simulation_watchdog.log` dosyasına kaydedilir. Normal çalışmada
-`sorting_cell_safety_collision`, `sorting_cell_progress_stalled` ve robot watchdog sayaçları
-`0` kalır.
+- Three UR10e robots using official visual, collision, mass, inertia, and joint-limit data
+- Procedural four-cup vacuum end effectors inspired by the Robotiq EPick
+- Closed-loop conveyor slats whose motion transports parcels through physical contact
+- Basler ace 2 main inspection camera and three RealSense D455 local camera models
+- Physical parcels with randomized mass, pose, label orientation, and color destination
+- Infeed pick, orientation check, label-up correction, conveyor transfer, tracking, and bin placement
+- Exclusive red/blue task reservation to prevent duplicate robot ownership
+- IK motion with TCP arrival checks, motion watchdogs, and collision recovery
+- Continuous parcel recycling for stable long-duration memory use
+- One-command scene generation and launch on Windows
 
-Eğimli besleyici sonsuz sayıda sahne nesnesi üretmez. Aynı fiziksel koli magazinden giriş
-sepetine, kontrol istasyonuna, hareketli banda, ana kameraya ve renk sepetine kadar ilerler;
-çıktı sepetindeki bekleme süresinden sonra havuza dönerek yeniden kullanılır. Böylece uzun süre
-açık kalan simülasyonda RAM kullanımı sürekli büyümez. Bırakma aralığı, havuz büyüklüğü ve
-çıktı sepetinde kalma süresi `config/cell.yaml` içindeki `infeed_supply` bölümünden değiştirilebilir.
+## Process Flow
 
-## Komut satırından çalıştırma
+1. The magazine releases a parcel into the infeed area.
+2. The infeed UR10e picks it with vacuum and places it at the inspection station.
+3. A local camera verifies the label orientation; the robot corrects the parcel if required.
+4. The parcel is transferred to the moving conveyor.
+5. The main camera assigns a destination and reserves the parcel for the matching robot.
+6. The red or blue sorting UR10e tracks, picks, and places the parcel in its destination bin.
+7. Parcels are recycled back into the pool after a configurable dwell time.
+
+## Technology
+
+- CoppeliaSim 4.10 Pro
+- MuJoCo physics engine
+- Python 3.11+
+- Lua scene controller
+- ROS 2 Jazzy interface definitions
+- PyYAML and pytest
+- Universal Robots ROS 2 Description 4.3.1
+
+## Quick Start
+
+### Prerequisites
+
+- Windows 10 or 11
+- Git
+- Python 3.11–3.14
+- CoppeliaSim 4.10 with the ZeroMQ remote API enabled
+
+### Setup
+
+```powershell
+git clone https://github.com/orhanucok/ur10e-cargo-sorting-automation.git
+cd ur10e-cargo-sorting-automation
+
+py -3.11 -m venv work\.venv
+.\work\.venv\Scripts\python.exe -m pip install -e ".[dev,sim]"
+.\scripts\bootstrap_vendor.ps1
+```
+
+### Run
 
 ```powershell
 .\scripts\launch_project.ps1
 ```
 
-Çekirdek testleri tek başına çalıştırmak için:
+The launcher runs the core safety tests, verifies the pinned UR10e model, locates CoppeliaSim, builds a fresh scene, and starts the simulation.
+
+To create a desktop shortcut:
+
+```powershell
+.\scripts\create_desktop_shortcut.ps1
+```
+
+## Tests
 
 ```powershell
 .\work\.venv\Scripts\python.exe -m pytest -q
 ```
 
-## Doğruluk sınırı
+The test suite covers configuration safety rules, parcel ownership, red/blue robot assignment, low-confidence rejection, task state transitions, arrival-time ordering, parcel inertia, and vacuum grip limits.
 
-Şu anki sahne gerçek MuJoCo temas fiziği, gerçek UR10e geometrisi/dinamiği ve çalışan
-görev akışı içerir. Vakum kavrama, temas mesafesi doğrulandıktan sonra sert bir tutma
-bağıyla modellenir. Ana kameranın renk kararı ve giriş D455'in etiket-yönü kontrolü bu aşamada
-koli pozundan alınan simülasyon ground-truth bilgisini kullanır; gerçek piksel tabanlı
-OpenCV/OCR düğümü ve ROS 2 Jazzy +
-MoveIt 2 entegrasyonu sonraki devreye alma katmanıdır. Bu ayrım, görüntü işleme başarı
-oranının fizik demonstrasyonuyla karıştırılmaması için kasıtlıdır.
+## Configuration
 
-Üretim sonucunu temsil etmek için karton–bant sürtünmesi, vakum sızdırmazlığı, kamera
-gecikmesi ve gerçek robot hız/ivme sınırları sahada ölçülerek `config/physics.yaml`
-değerleri kalibre edilmelidir.
+- `config/cell.yaml` — cell geometry, conveyor behavior, cameras, robots, parcel supply, and timing
+- `config/physics.yaml` — contact, friction, vacuum, mass, and dynamics parameters
+- `vendor.lock.json` — pinned upstream robot-description and simulator versions
+
+## Repository Structure
+
+```text
+config/       Cell and physics configuration
+coppeliasim/  Scene builder and Lua runtime controller
+docs/images/  Project screenshots used by this README
+ros2_ws/      ROS 2 messages, actions, and coordination core
+scripts/      Setup, launch, watchdog, and shortcut utilities
+tools/        URDF preparation and diagnostics
+outputs/      Validation captures and engineering notes
+```
+
+## Reliability and Recovery
+
+An independent watchdog monitors controller heartbeat, production progress, and simulator state every two seconds. It resumes an unexpected pause and rebuilds the scene if the heartbeat stalls for 20 seconds or production does not advance for 60 simulation seconds. Collision recovery stops the conveyor and retracts the affected robot vertically before resuming operation.
+
+The infeed system reuses a bounded parcel pool instead of generating unlimited scene objects. Supply interval, pool size, and output-bin dwell time can be adjusted in the `infeed_supply` section of `config/cell.yaml`.
+
+## Simulation Scope
+
+The current scene uses MuJoCo contact physics, official UR10e geometry and dynamics, and a working end-to-end task flow. Vacuum attachment is represented by a rigid hold constraint after contact-distance validation. Color classification and label-orientation checks currently use simulation ground truth derived from parcel state.
+
+Pixel-based OpenCV/OCR perception, ROS 2 Jazzy runtime integration, and MoveIt 2 planning are intended as the next commissioning layer. For hardware-correlated results, cardboard friction, vacuum sealing, camera latency, and robot velocity/acceleration limits should be calibrated from measurements and recorded in `config/physics.yaml`.
+
+## License
+
+No project-wide license has been assigned yet. The pinned Universal Robots description package retains its upstream license and mesh-specific terms.

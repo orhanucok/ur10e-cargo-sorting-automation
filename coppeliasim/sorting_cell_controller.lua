@@ -102,7 +102,7 @@ local function updateCameraDecisions()
                 local destination = route == 1 and 'KIRMIZI' or 'MAVI'
                 sim.addLog(
                     sim.verbosity_scriptinfos,
-                    string.format('[Basler-sim] koli=%d renk-etiketi=%s gorev=%s-kol', box, destination, destination)
+                    string.format('[Basler-sim] parcel=%d color-label=%s assignment=%s-arm', box, destination, destination)
                 )
             end
         end
@@ -168,7 +168,7 @@ local function releaseBox(robot)
         sim.setInt32Signal('sorting_cell_supply_completed', supplyCompletedCount)
     end
     local destination = robot.route == 1 and 'KIRMIZI' or 'MAVI'
-    sim.addLog(sim.verbosity_scriptinfos, '[' .. robot.name .. '] koli ' .. destination .. ' sepetine birakildi')
+    sim.addLog(sim.verbosity_scriptinfos, '[' .. robot.name .. '] parcel placed in the ' .. destination .. ' bin')
     robot.box = nil
 end
 
@@ -325,7 +325,7 @@ local function releaseSupplyBox(box, now)
     supplyPhase[box] = 'feeding'
     sim.addLog(
         sim.verbosity_scriptinfos,
-        string.format('[BESLEME] magazin koli %02d serbest birakti', index)
+        string.format('[INFEED] magazine released parcel %02d', index)
     )
 end
 
@@ -364,7 +364,7 @@ local function attachInfeedBox(robot)
     supplyPhase[robot.box] = 'infeed'
     supplyLandedAt[robot.box] = nil
     sim.setInt32Signal('sorting_cell_infeed_vacuum', 1)
-    sim.addLog(sim.verbosity_scriptinfos, '[UR10e-GIRIS] sepetten vakum kavrama OK')
+    sim.addLog(sim.verbosity_scriptinfos, '[UR10e-INFEED] vacuum pick from bin OK')
     return true
 end
 
@@ -374,7 +374,7 @@ local function placeInfeedBoxOnStation(robot)
     heldBy[robot.box] = nil
     supplyPhase[robot.box] = 'station'
     sim.setInt32Signal('sorting_cell_infeed_vacuum', 0)
-    sim.addLog(sim.verbosity_scriptinfos, '[UR10e-GIRIS] koli kontrol istasyonuna birakildi')
+    sim.addLog(sim.verbosity_scriptinfos, '[UR10e-INFEED] parcel placed at inspection station')
 end
 
 local function releaseInfeedBoxToBelt(robot, now)
@@ -393,7 +393,7 @@ local function releaseInfeedBoxToBelt(robot, now)
     sim.setInt32Signal('sorting_cell_infeed_vacuum', 0)
     sim.addLog(
         sim.verbosity_scriptinfos,
-        string.format('[UR10e-GIRIS] yonu duzeltilmis koli %02d banda verildi', supplyIndex[box])
+        string.format('[UR10e-INFEED] oriented parcel %02d transferred to conveyor', supplyIndex[box])
     )
     robot.box = nil
 end
@@ -460,7 +460,7 @@ local function updateInfeed(robot, now)
         if elapsed >= 0.55 then
             robot.labelWasUp = labelNormalZ(robot.box) >= 0.92
             local result = robot.labelWasUp and 'USTTE' or 'YANLIS-YONDE'
-            sim.addLog(sim.verbosity_scriptinfos, '[D455-GIRIS] etiket=' .. result)
+            sim.addLog(sim.verbosity_scriptinfos, '[D455-INFEED] label=' .. result)
             robot.stationContact = boxTopContact(robot.box)
             transitionInfeed(robot, 'descend_station', now)
         end
@@ -517,8 +517,8 @@ local function updateInfeed(robot, now)
             local verified = labelNormalZ(robot.box) >= 0.98
             sim.addLog(
                 verified and sim.verbosity_scriptinfos or sim.verbosity_scripterrors,
-                verified and '[D455-GIRIS] etiket USTTE, bant aktarimi onaylandi' or
-                    '[D455-GIRIS] etiket yonu dogrulanamadi'
+                verified and '[D455-INFEED] label is UP; conveyor transfer approved' or
+                    '[D455-INFEED] label orientation could not be verified'
             )
             if not verified then
                 sim.setObjectOrientation(robot.box, sim.handle_world, {0.0, 0.0, 0.0})
@@ -569,7 +569,7 @@ local function updateInfeed(robot, now)
     then
         infeedWatchdogCount = infeedWatchdogCount + 1
         sim.setInt32Signal('sorting_cell_infeed_watchdog_recoveries', infeedWatchdogCount)
-        sim.addLog(sim.verbosity_scriptwarnings, '[UR10e-GIRIS] hareket zaman asimi; cevrim guvenli sekilde sifirlaniyor')
+        sim.addLog(sim.verbosity_scriptwarnings, '[UR10e-INFEED] motion timeout; safely resetting the cycle')
         if robot.box then
             stageSupplyBox(robot.box)
             robot.box = nil
@@ -616,7 +616,7 @@ local function updateContinuousSupply(now)
         elseif phase == 'belt' then
             local beltTimedOut = supplyBeltAt[box] and now - supplyBeltAt[box] >= 75.0
             if p[3] < 0.15 or p[1] > 5.40 or beltTimedOut then
-                sim.addLog(sim.verbosity_scriptwarnings, '[BESLEME] bant koli kurtarma dongusu uygulandi')
+                sim.addLog(sim.verbosity_scriptwarnings, '[INFEED] conveyor parcel recovery cycle applied')
                 stageSupplyBox(box)
                 phase = 'staged'
             end
@@ -803,7 +803,7 @@ function sysCall_init()
 
     robots = {
         {
-            name = 'UR10e-GIRIS',
+            name = 'UR10e-INFEED',
             base = references('robot.1.base')[1],
             tip = references('robot.1.tip')[1],
             target = references('robot.1.target')[1],
@@ -887,7 +887,7 @@ function sysCall_init()
     sim.setInt32Signal('sorting_cell_controller_state', 2)
     sim.addLog(
         sim.verbosity_scriptinfos,
-        '[HUCRE] uctan uca fiziksel koli dongusu, etiket yonlendirme ve renk ayirma aktif'
+        '[CELL] end-to-end physical parcel flow, label orientation, and color sorting active'
     )
 end
 
