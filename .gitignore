@@ -6,6 +6,7 @@ __pycache__/
 htmlcov/
 work/.venv/
 work/vendor/
+work/github-*.png
 artifacts/
 *.ttt
 *.log
