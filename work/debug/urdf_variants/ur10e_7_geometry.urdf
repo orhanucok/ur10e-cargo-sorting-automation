@@ -1,0 +1,149 @@
+<?xml version='1.0' encoding='utf-8'?>
+<robot name="ur10e_7_geometry">
+  <link name="base_link">
+    <visual>
+      <origin rpy="0.0 0.0 3.141592653589793" xyz="0.0 0.0 0.0" />
+      <geometry>
+        <mesh filename="file:///C:/Users/Ghost/Documents/Codex/2026-08-11/ger-ek-d-nya-sim-lasyonu/work/vendor/Universal_Robots_ROS2_Description/meshes/ur10e/visual/base.dae" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin rpy="0.0 0.0 3.141592653589793" xyz="0.0 0.0 0.0" />
+      <geometry>
+        <mesh filename="file:///C:/Users/Ghost/Documents/Codex/2026-08-11/ger-ek-d-nya-sim-lasyonu/work/vendor/Universal_Robots_ROS2_Description/meshes/ur10e/collision/base.stl" />
+      </geometry>
+    </collision>
+  </link>
+  <link name="shoulder_link">
+    <visual>
+      <origin rpy="0.0 0.0 3.141592653589793" xyz="0.0 0.0 0.0" />
+      <geometry>
+        <mesh filename="file:///C:/Users/Ghost/Documents/Codex/2026-08-11/ger-ek-d-nya-sim-lasyonu/work/vendor/Universal_Robots_ROS2_Description/meshes/ur10e/visual/shoulder.dae" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin rpy="0.0 0.0 3.141592653589793" xyz="0.0 0.0 0.0" />
+      <geometry>
+        <mesh filename="file:///C:/Users/Ghost/Documents/Codex/2026-08-11/ger-ek-d-nya-sim-lasyonu/work/vendor/Universal_Robots_ROS2_Description/meshes/ur10e/collision/shoulder.stl" />
+      </geometry>
+    </collision>
+  </link>
+  <link name="upper_arm_link">
+    <visual>
+      <origin rpy="1.5707963267948966 0.0 -1.5707963267948966" xyz="0.0 0.0 0.1762" />
+      <geometry>
+        <mesh filename="file:///C:/Users/Ghost/Documents/Codex/2026-08-11/ger-ek-d-nya-sim-lasyonu/work/vendor/Universal_Robots_ROS2_Description/meshes/ur10e/visual/upperarm.dae" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin rpy="1.5707963267948966 0.0 -1.5707963267948966" xyz="0.0 0.0 0.1762" />
+      <geometry>
+        <mesh filename="file:///C:/Users/Ghost/Documents/Codex/2026-08-11/ger-ek-d-nya-sim-lasyonu/work/vendor/Universal_Robots_ROS2_Description/meshes/ur10e/collision/upperarm.stl" />
+      </geometry>
+    </collision>
+  </link>
+  <link name="forearm_link">
+    <visual>
+      <origin rpy="1.5707963267948966 0.0 -1.5707963267948966" xyz="0.0 0.0 0.0393" />
+      <geometry>
+        <mesh filename="file:///C:/Users/Ghost/Documents/Codex/2026-08-11/ger-ek-d-nya-sim-lasyonu/work/vendor/Universal_Robots_ROS2_Description/meshes/ur10e/visual/forearm.dae" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin rpy="1.5707963267948966 0.0 -1.5707963267948966" xyz="0.0 0.0 0.0393" />
+      <geometry>
+        <mesh filename="file:///C:/Users/Ghost/Documents/Codex/2026-08-11/ger-ek-d-nya-sim-lasyonu/work/vendor/Universal_Robots_ROS2_Description/meshes/ur10e/collision/forearm.stl" />
+      </geometry>
+    </collision>
+  </link>
+  <link name="wrist_1_link">
+    <visual>
+      <origin rpy="1.5707963267948966 0.0 0.0" xyz="0.0 0.0 -0.135" />
+      <geometry>
+        <mesh filename="file:///C:/Users/Ghost/Documents/Codex/2026-08-11/ger-ek-d-nya-sim-lasyonu/work/vendor/Universal_Robots_ROS2_Description/meshes/ur10e/visual/wrist1.dae" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin rpy="1.5707963267948966 0.0 0.0" xyz="0.0 0.0 -0.135" />
+      <geometry>
+        <mesh filename="file:///C:/Users/Ghost/Documents/Codex/2026-08-11/ger-ek-d-nya-sim-lasyonu/work/vendor/Universal_Robots_ROS2_Description/meshes/ur10e/collision/wrist1.stl" />
+      </geometry>
+    </collision>
+  </link>
+  <link name="wrist_2_link">
+    <visual>
+      <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 -0.12" />
+      <geometry>
+        <mesh filename="file:///C:/Users/Ghost/Documents/Codex/2026-08-11/ger-ek-d-nya-sim-lasyonu/work/vendor/Universal_Robots_ROS2_Description/meshes/ur10e/visual/wrist2.dae" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 -0.12" />
+      <geometry>
+        <mesh filename="file:///C:/Users/Ghost/Documents/Codex/2026-08-11/ger-ek-d-nya-sim-lasyonu/work/vendor/Universal_Robots_ROS2_Description/meshes/ur10e/collision/wrist2.stl" />
+      </geometry>
+    </collision>
+  </link>
+  <link name="wrist_3_link">
+    <visual>
+      <origin rpy="1.5707963267948966 0.0 0.0" xyz="0.0 -0.0005 -0.1168" />
+      <geometry>
+        <mesh filename="file:///C:/Users/Ghost/Documents/Codex/2026-08-11/ger-ek-d-nya-sim-lasyonu/work/vendor/Universal_Robots_ROS2_Description/meshes/ur10e/visual/wrist3.dae" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin rpy="1.5707963267948966 0.0 0.0" xyz="0.0 -0.0005 -0.1168" />
+      <geometry>
+        <mesh filename="file:///C:/Users/Ghost/Documents/Codex/2026-08-11/ger-ek-d-nya-sim-lasyonu/work/vendor/Universal_Robots_ROS2_Description/meshes/ur10e/collision/wrist3.stl" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="shoulder_pan_joint" type="revolute">
+    <parent link="base_link" />
+    <child link="shoulder_link" />
+    <origin rpy="0 0 0" xyz="0 0 0.1807" />
+    <axis xyz="0 0 1" />
+    <limit effort="330.0" lower="-6.283185307179586" upper="6.283185307179586" velocity="2.0943951023931953" />
+    <dynamics damping="0" friction="0" />
+  </joint>
+  <joint name="shoulder_lift_joint" type="revolute">
+    <parent link="shoulder_link" />
+    <child link="upper_arm_link" />
+    <origin rpy="1.570796327 0 0" xyz="0 0 0" />
+    <axis xyz="0 0 1" />
+    <limit effort="330.0" lower="-6.283185307179586" upper="6.283185307179586" velocity="2.0943951023931953" />
+    <dynamics damping="0" friction="0" />
+  </joint>
+  <joint name="elbow_joint" type="revolute">
+    <parent link="upper_arm_link" />
+    <child link="forearm_link" />
+    <origin rpy="0 0 0" xyz="-0.6127 0 0" />
+    <axis xyz="0 0 1" />
+    <limit effort="150.0" lower="-3.141592653589793" upper="3.141592653589793" velocity="3.141592653589793" />
+    <dynamics damping="0" friction="0" />
+  </joint>
+  <joint name="wrist_1_joint" type="revolute">
+    <parent link="forearm_link" />
+    <child link="wrist_1_link" />
+    <origin rpy="0 0 0" xyz="-0.57155 0 0.17415" />
+    <axis xyz="0 0 1" />
+    <limit effort="54.0" lower="-6.283185307179586" upper="6.283185307179586" velocity="3.141592653589793" />
+    <dynamics damping="0" friction="0" />
+  </joint>
+  <joint name="wrist_2_joint" type="revolute">
+    <parent link="wrist_1_link" />
+    <child link="wrist_2_link" />
+    <origin rpy="1.570796327 0 0" xyz="0 -0.11985 -2.458164590756244e-11" />
+    <axis xyz="0 0 1" />
+    <limit effort="54.0" lower="-6.283185307179586" upper="6.283185307179586" velocity="3.141592653589793" />
+    <dynamics damping="0" friction="0" />
+  </joint>
+  <joint name="wrist_3_joint" type="revolute">
+    <parent link="wrist_2_link" />
+    <child link="wrist_3_link" />
+    <origin rpy="1.570796326589793 3.141592653589793 3.141592653589793" xyz="0 0.11655 -2.390480459346185e-11" />
+    <axis xyz="0 0 1" />
+    <limit effort="54.0" lower="-6.283185307179586" upper="6.283185307179586" velocity="3.141592653589793" />
+    <dynamics damping="0" friction="0" />
+  </joint>
+</robot>

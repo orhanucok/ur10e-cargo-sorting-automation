@@ -1,0 +1,8 @@
+string box_id
+string destination
+float32 confidence
+geometry_msgs/PoseStamped pose
+float32 conveyor_position_m
+float32 conveyor_velocity_m_s
+builtin_interfaces/Time observed_at
+

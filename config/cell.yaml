@@ -1,0 +1,105 @@
+schema_version: 1
+
+world:
+  size_m: [7.0, 4.5, 3.0]
+  gravity_m_s2: 9.81
+
+physics:
+  engine: mujoco
+  development_step_s: 0.005
+  validation_step_s: 0.002
+  deterministic_seed: 20260811
+
+conveyor:
+  origin_m: [0.0, 0.0, 0.80]
+  length_m: 5.0
+  width_m: 0.70
+  deck_thickness_m: 0.10
+  speed_m_s: 0.15
+  max_speed_m_s: 0.30
+  direction: [1.0, 0.0, 0.0]
+  encoder_resolution_m: 0.001
+
+orientation_station:
+  center_m: [-0.45, 0.0, 0.82]
+  size_m: [0.70, 0.70, 0.08]
+
+robots:
+  - name: ur10e_infeed
+    model: ur10e
+    base_position_m: [-0.65, -0.65, 1.05]
+    base_yaw_deg: 45.0
+    role: orient
+    destination: null
+  - name: ur10e_red
+    model: ur10e
+    base_position_m: [2.90, -0.95, 1.05]
+    base_yaw_deg: 35.0
+    role: sort
+    destination: red
+  - name: ur10e_blue
+    model: ur10e
+    base_position_m: [4.20, 0.95, 1.05]
+    base_yaw_deg: -145.0
+    role: sort
+    destination: blue
+
+pick_zones:
+  red:
+    center_s_m: 3.10
+    length_m: 0.55
+  blue:
+    center_s_m: 4.35
+    length_m: 0.55
+
+bins:
+  infeed:
+    center_m: [-1.15, 0.25, 0.35]
+    inner_size_m: [0.80, 0.75, 0.65]
+    color_rgb: [0.45, 0.45, 0.48]
+  red:
+    center_m: [2.85, -1.70, 0.35]
+    inner_size_m: [0.80, 0.75, 0.65]
+    color_rgb: [0.75, 0.08, 0.08]
+  blue:
+    center_m: [4.30, 1.70, 0.35]
+    inner_size_m: [0.80, 0.75, 0.65]
+    color_rgb: [0.06, 0.18, 0.78]
+
+infeed_supply:
+  chute_exit_m: [-1.15, 0.70, 0.86]
+  chute_top_m: [-1.15, 1.60, 2.15]
+  chute_width_m: 0.66
+  chute_plate_thickness_m: 0.055
+  side_wall_height_m: 0.20
+  pool_size: 10
+  release_interval_s: 3.2
+  recycle_delay_s: 10.0
+
+cameras:
+  main:
+    model: basler_a2A2448_105g5cBAS
+    position_m: [1.65, 0.0, 2.30]
+    orientation_rpy_deg: [180.0, 0.0, 0.0]
+    development_resolution: [960, 540]
+    native_resolution: [2448, 2048]
+    fps: 30
+    horizontal_fov_deg: 62.0
+    near_clip_m: 0.10
+    far_clip_m: 4.0
+    decision_owner: true
+  local:
+    model: realsense_d455
+    development_resolution: [640, 480]
+    depth_resolution: [640, 480]
+    fps: 15
+    horizontal_fov_deg: 87.0
+    near_clip_m: 0.52
+    far_clip_m: 6.0
+    decision_owner: false
+
+routing:
+  minimum_confidence: 0.985
+  reservation_horizon_s: 8.0
+  unknown_destination: reject
+  maximum_track_age_s: 1.0

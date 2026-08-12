@@ -1,0 +1,8 @@
+string box_id
+string destination
+string assigned_robot
+geometry_msgs/PoseStamped predicted_pick_pose
+builtin_interfaces/Time expected_arrival
+uint8 priority
+string status
+

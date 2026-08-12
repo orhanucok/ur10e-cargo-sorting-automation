@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=75", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sorting-cell-sim"
+version = "0.1.0"
+description = "Physics-based virtual commissioning core for a three-UR10e parcel sorting cell"
+requires-python = ">=3.11,<3.15"
+dependencies = [
+  "PyYAML==6.0.3",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest==9.1.1",
+]
+sim = [
+  "coppeliasim-zmqremoteapi-client==2.0.4",
+]
+
+[tool.setuptools]
+package-dir = {"" = "ros2_ws/src/sorting_cell_core"}
+
+[tool.setuptools.packages.find]
+where = ["ros2_ws/src/sorting_cell_core"]
+
+[tool.pytest.ini_options]
+addopts = "-ra --strict-markers"
+testpaths = ["ros2_ws/src/sorting_cell_core/test"]
+pythonpath = ["ros2_ws/src/sorting_cell_core"]
+

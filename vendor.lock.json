@@ -1,0 +1,17 @@
+{
+  "universal_robots_ros2_description": {
+    "repository": "https://github.com/UniversalRobots/Universal_Robots_ROS2_Description.git",
+    "tag": "4.3.1",
+    "commit": "ae333289875f9ba5a9ea6649a54036efb5ccabee",
+    "license": "BSD-3-Clause with mesh-specific terms described by the upstream repository"
+  },
+  "coppeliasim": {
+    "version": "4.10.0-rev0",
+    "physics_engine": "MuJoCo"
+  },
+  "ros": {
+    "distribution": "jazzy",
+    "target_os": "Ubuntu 24.04"
+  }
+}
+

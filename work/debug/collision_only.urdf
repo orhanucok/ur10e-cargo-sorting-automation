@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<robot name="collision_only">
+  <link name="base_link">
+    <collision><geometry><mesh filename="C:/Users/Ghost/Documents/Codex/2026-08-11/ger-ek-d-nya-sim-lasyonu/work/vendor/Universal_Robots_ROS2_Description/meshes/ur10e/collision/base.stl"/></geometry></collision>
+    <inertial><mass value="4"/><inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/></inertial>
+  </link>
+</robot>
